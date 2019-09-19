@@ -1,6 +1,8 @@
 import React from "react";
 import axios from "axios";
 import MovieCard from "./MovieCard";
+import { Link } from 'react-router-dom'
+
 export default class Movie extends React.Component {
   constructor(props) {
     super(props);
@@ -13,7 +15,7 @@ export default class Movie extends React.Component {
     this.fetchMovie(this.props.match.params.id);
   }
 
-  componentWillReceiveProps(newProps) {
+  componentDidUpdate(newProps) {
     if (this.props.match.params.id !== newProps.match.params.id) {
       this.fetchMovie(newProps.match.params.id);
     }
@@ -31,6 +33,13 @@ export default class Movie extends React.Component {
     addToSavedList(this.state.movie);
   };
 
+  deleteMovie = (movie) => {
+    axios
+    .delete(`http://localhost:5000/api/movies/${movie.id}`)
+    .then(res => this.props.history.push('/'))
+    .catch(err => console.log(err.res))
+  }
+
   render() {
     if (!this.state.movie) {
       return <div>Loading movie information...</div>;
@@ -39,9 +48,15 @@ export default class Movie extends React.Component {
     return (
       <div className="save-wrapper">
         <MovieCard movie={this.state.movie} />
-        <div className="save-button" onClick={this.saveMovie}>
+        <button className="save-button" onClick={this.saveMovie}>
           Save
-        </div>
+        </button>
+        <Link to={{
+          pathname:`/update-movie/${this.state.movie.id}`,
+          state: this.state.movie
+        }}
+        >Update Movie</Link>
+        <button onClick={() => this.deleteMovie(this.state.movie)}>Delete Movie</button>
       </div>
     );
   }

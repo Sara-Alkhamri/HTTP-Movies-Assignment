@@ -31,7 +31,7 @@ const MovieForm = props => {
         .put(`http://localhost:5000/api/movies/${updateMovie.id}`, updateMovie)
         .then(res => {
             setUpdateMovie(initialValue)
-            .props.histroy.push(`/movies/${props.match.params.id}`)
+            props.history.push(`/movies/${props.match.params.id}`)
         })
         .catch(err => console.log(err))
     }
